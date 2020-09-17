@@ -171,5 +171,5 @@ cut ${tfile} -f1 | sort -u > ${sfile}
 #Submit to cluster
 while read sample ; do
   echo "Submitting to cluster: ${sample}" >> ${log}
-  qsub "${loc}/qsub_star_align.sh" -v sample=${sample},ref=${ref},output=${output},tmp_dir=${tmp_dir},log=${log},star=${star},conda=${conda}
+  qsub "${loc}/qsub/qsub_star_align.sh" -v sample=${sample},ref=${ref},output=${output},tmp_dir=${tmp_dir},log=${log},star=${star},conda=${conda}
 done < ${sfile}

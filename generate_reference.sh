@@ -119,5 +119,5 @@ echo "STAR: ${star}" >> ${log}
 echo "------------" >> ${log}
 
 # Submit to cluster
-qsub "${loc}/qsub_generate_reference.sh" -v input=${input},outdir=${outdir},tmp_dir=${tmp_dir},log=${log},star=${star},conda=${conda}
+qsub "${loc}/qsub/qsub_generate_reference.sh" -v input=${input},outdir=${outdir},tmp_dir=${tmp_dir},log=${log},star=${star},conda=${conda}
 
