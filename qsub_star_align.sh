@@ -2,7 +2,7 @@
 ## Run STAR alignment for RNAseq data. Takes one directory containing all fastqs or file containing list of directories with fastqs, one directory per line. Output location is optional. If not supplied, output will be stored in home directory.
 ## Caveat: If list of directories is supplied, it is assumed that each directory is a sample
 ## For easy usage, submit job with ./star_align.sh script
-## Usage: qsub ./qsub_star_align.sh -v sample=${sample},ref=${ref},output=${output},tmp_dir=${tmp_dir},log=${log},star=${star}
+## Usage: qsub ./qsub_star_align.sh -v sample=${sample},ref=${ref},output=${output},tmp_dir=${tmp_dir},log=${log},star=${star},conda=${conda}
 
 # Job Name
 #PBS -N STAR_align
@@ -15,6 +15,14 @@
 #PBS -e STAR_align.err
 # stdout redirection
 #PBS -o STAR_align.log
+
+# Source bashrc
+source ~/.bashrc
+
+# Load conda environment if requested
+if [[ ! -z ${conda}  ]]; then
+  conda activate ${conda}
+fi
 
 # Create sample log
 slog="${tmp_dir}/${sample}_alignment.log"
