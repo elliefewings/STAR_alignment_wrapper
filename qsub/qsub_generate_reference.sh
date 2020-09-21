@@ -1,7 +1,7 @@
 #!/bin/bash
 ## Run STAR genomegenerate for RNAseq data. Takes fasta file. Output location is optional. If not supplied, output will be stored in home directory.
 ## For easy usage, submit job with ./generate_reference.sh script
-## Usage: qsub ./qsub_generate_reference.sh" -v input=${input},outdir=${outdir},tmp_dir=${tmp_dir},log=${log},star=${star},conda=${conda}
+## Usage: qsub ./qsub_generate_reference.sh" -v input=${input},outdir=${outdir},log=${log},star=${star},conda=${conda}
 
 # Job Name
 #PBS -N STAR_genomeGenerate
@@ -23,8 +23,21 @@ if [[ ! -z ${conda}  ]]; then
   conda activate ${conda}
 fi
 
+# Unzip input if necassary
+if [[ "${input}" == *".fa.gz" ]] ; then
+  fasta=$(echo ${input} | sed 's+.fa.gz+.fa+')
+  gunzip -c ${input} > ${fasta}
+elif [[ "${input}" == *".fa" ]] ; then
+  fasta=${input}
+fi
+
 # Generate reference
 STAR --runMode genomeGenerate \
   --genomeDir ${outdir} \
-  --genomeFastaFiles ${fastqs} \
+  --genomeFastaFiles ${fasta} \
   --runThreadN 8 &>> ${log}
+  
+# Remove unzipped file
+if [[ "${input}" == *".fa.gz" ]] ; then
+  rm ${fasta}
+fi

@@ -35,14 +35,11 @@ helpFunction()
   echo "Options:"
       echo -e "\t-i\tInput: Path to directory containing all fastqs or file containing list of directories with fastqs, one directory per line [required]"
       echo -e "\t-r\tReference transcriptome: Path to directory containing reference transcriptome [required]"
-      echo -e "\t-o\tOutput directory: Path to location where output will be generated [default=$HOME]"
-      echo -e "\t-c\tConda environment: Name of conda environment with STAR installed (unless it is available on path) [default=$PATH]"
+      echo -e "\t-o\tOutput directory: Path to location where output will be generated [default=HOME]"
+      echo -e "\t-c\tConda environment: Name of conda environment with STAR installed (unless it is available on path) [default=PATH]"
       echo -e "\t-h\tHelp: Does what it says on the tin"
   echo ""
 }
-
-# Set output location
-output="$HOME"
 
 # Accept arguments specified by user
 while getopts "i:r:o:c:h" opt; do
@@ -75,6 +72,9 @@ if [[ "${input}" == "" || "${ref}" == "" ]]; then
   echo "Input and reference are required."
   helpFunction
   abort
+else
+  input=$(realpath "${input}")
+  ref=$(realpath "${ref}")
 fi
 
 # Load conda environment if requested
@@ -84,15 +84,14 @@ fi
 
 # Create directory for log and output
 if [[ -z ${output} ]]; then
-    outdir="${PBS_O_HOME}/STAR_align_output_$(date +%Y%m%d)"
+    outdir=$(realpath "${PBS_O_HOME}/STAR_align_output_$(date +%Y%m%d)")
 else
-    outdir="${output}/STAR_align_output_$(date +%Y%m%d)"
+    outdir=$(realpath "${output}/STAR_align_output_$(date +%Y%m%d)")
 fi
 
 mkdir -p ${outdir}
 
 log="${outdir}/STAR_align_$(date +%Y%m%d).log"
-
 
 # Find submission location
 loc="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -101,7 +100,15 @@ loc="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 tmp_dir=$(mktemp -d -t tmp-XXXX-$(date +%Y%m%d) --tmpdir=${outdir})
 
 # Find STAR
+set +e
 star=$(which STAR)
+set -e
+
+if [[ ${star} == "" ]] ; then
+  echo "STAR not found on PATH. Please install or supply a conda environment"
+  helpFunction
+  abort
+fi
 
 echo "Running ./STAR_align.sh" > ${log}
 echo "" >> ${log}

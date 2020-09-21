@@ -72,6 +72,8 @@ if [[ "${input}" != *"fa" && "${input}" != *"fa.gz" ]] ; then
     echo "Incorrect arguments."
     echo "Fasta input is required (.fa or .fa.gz)"
     helpFunction
+else
+  input=$(realpath "${input}")
 fi
 
 # Load conda environment if requested
@@ -81,9 +83,9 @@ fi
 
 # Create directory for log and output
 if [[ -z ${output} ]]; then
-    outdir="${PBS_O_HOME}/STAR_ref"
+    outdir=$(realpath "${PBS_O_HOME}/STAR_ref")
 else
-    outdir="${output}/STAR_ref"
+    outdir=$(realpath "${output}/STAR_ref")
 fi
 
 mkdir -p ${outdir}
@@ -94,9 +96,6 @@ log="${outdir}/STAR_genomegenerate_$(date +%Y%m%d).log"
 
 # Find submission location
 loc="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-
-# Create temporary directory
-tmp_dir=$(mktemp -d -t tmp-XXXX-$(date +%Y%m%d) --tmpdir=${outdir})
 
 # Find STAR
 star=$(which STAR)
@@ -119,5 +118,5 @@ echo "STAR: ${star}" >> ${log}
 echo "------------" >> ${log}
 
 # Submit to cluster
-qsub "${loc}/qsub/qsub_generate_reference.sh" -v input=${input},outdir=${outdir},tmp_dir=${tmp_dir},log=${log},star=${star},conda=${conda}
+qsub "${loc}/qsub/qsub_generate_reference.sh" -v input=${input},outdir=${outdir},log=${log},star=${star},conda=${conda}
 
