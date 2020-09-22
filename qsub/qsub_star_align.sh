@@ -28,7 +28,7 @@ fi
 slog="${tmp_dir}/${sample}_alignment.log"
 
 # Find fastqs
-fastqs=$(cat "${tmp_dir}/samples.txt" | grep ${sample} | cut -f2 | paste -s -d,)
+fastqs=$(cat "${tmp_dir}/samples.tmp.txt" | grep ${sample} | cut -f2 | paste -s -d,)
 
 # Align
 ${star} --genomeDir ${ref} \
