@@ -2,7 +2,7 @@
 ## Run STAR alignment for RNAseq data. Takes one directory containing all fastqs or file containing list of directories with fastqs, one directory per line. Output location is optional. If not supplied, output will be stored in home directory.
 ## Caveat: If list of directories is supplied, it is assumed that each directory is a sample
 ## For easy usage, submit job with ./star_align.sh script
-## Usage: qsub ./qsub_star_align.sh -v sample=${sample},ref=${ref},output=${output},tmp_dir=${tmp_dir},log=${log},star=${star},conda=${conda}
+## Usage: qsub ./qsub_star_align.sh -v sample=${sample},ref=${ref},outdir=${outdir},tmp_dir=${tmp_dir},log=${log},star=${star},conda=${conda}
 
 # Job Name
 #PBS -N STAR_align
@@ -34,7 +34,8 @@ fastqs=$(cat "${tmp_dir}/samples.tmp.txt" | grep ${sample} | cut -f2 | paste -s 
 ${star} --genomeDir ${ref} \
   --readFilesIn ${fastqs} \
   --readFilesCommand gunzip -c \
-  --outFileNamePrefix ${tmp_dir}/${sample}_star_tmp \
+  --outFileNamePrefix ${outdir}/${sample} \
   --outSAMtype BAM SortedByCoordinate \
+  --limitOutSJcollapsed 5000000 \
   --runThreadN 8 &>> "${slog}"
   
