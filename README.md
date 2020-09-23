@@ -21,7 +21,7 @@ Usage: ./STAR_align.sh -i <input file or directory> -r <reference trancriptome> 
 Options:
         -i      Input: Path to directory containing all fastqs or file containing list of directories with fastqs, one directory per line [required]
         -r      Reference transcriptome: Path to directory containing reference transcriptome [required]
-        -o      Output directory: Path to location where output will be generated [default=/home/bq_efewings]
+        -o      Output directory: Path to location where output will be generated [default=HOME]
         -c      Conda environment: Name of conda environment with STAR installed (unless it is available on path) [default=PATH]
         -h      Help: Does what it says on the tin
 
@@ -98,7 +98,7 @@ Usage: ./generate_reference.sh -i <input fasta> -o <output location>[optional] -
    
 Options:
        -i      Input: Path to fasta file for reference [required]
-       -o      Output directory: Path to location where output will be generated [default=$HOME]
+       -o      Output directory: Path to location where output will be generated [default=HOME]
        -c      Conda environment: Name of conda environment with STAR installed (unless it is available on path) [default=PATH]
        -h      Help: Does what it says on the tin
 ```
